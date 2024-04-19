@@ -1,33 +1,51 @@
-let toggleBtn = document.getElementById('toggle-btn');
-let body = document.body;
-let darkMode = localStorage.getItem('dark-mode')
+/**
+ * Toggle between dark and light mode.
+ * The function first initializes the toggle button and body elements.
+ * It then defines three functions: enableDarkMode, disableDarkMode, and systemPrefersDark.
+ * The last three lines of code check the user's preference for dark mode,
+ * and apply the appropriate mode using the enableDarkMode or disableDarkMode function.
+ * Finally, an event listener is added to the toggle button, so that the mode can be toggled onClick.
+ */
 
+// Initialize variables
+const toggleBtn = document.getElementById('toggle-btn'); // Get the toggle button element
+const body = document.body; // Get the body element
+let darkMode = localStorage.getItem('dark-mode'); // Get the user's current mode from local storage
 
-//enabling the dark mode
-const enableDarkMode = () =>{
-    toggleBtn.classList.replace('fa-sun', 'fa-moon');  //replacing the icon 
-    body.classList.add('dark');                       //adding a <div> with class name with class=dark
-    localStorage.setItem('dark-mode', 'enabled');     //static transition after refresh
-
-}
-//disabling the dark mode
-const disableDarkMode = () =>{
-    toggleBtn.classList.replace('fa-moon', 'fa-sun');   //replacing the icon back to sun
-    body.classList.remove('dark');                      //removing the class class name with class=dark
-    localStorage.setItem('dark-mode', 'disabled');      //disable static transition after refresh
-}
-
-if(darkMode == 'enabled'){
-    enableDarkMode();                 //to check for static transition after refresh
-}
-
-//on click arrow function to call enable/disable function for the transition
-toggleBtn.onclick = (e) =>{
-    darkMode = localStorage.getItem('dark-mode');
-    if(darkMode == 'disabled'){
-        enableDarkMode();
-    }else{
-        disableDarkMode();
-    }
+/**
+ * Enable dark mode by adding the 'dark' class to the body and updating the mode in local storage.
+ */
+function enableDarkMode() {
+    toggleBtn.classList.replace('fa-sun', 'fa-moon'); // Replace the class of the toggle button to 'fa-moon'
+    body.classList.add('dark'); // Add the 'dark' class to the body
+    darkMode = 'enabled'; // Update the mode in local storage to 'enabled'
+    localStorage.setItem('dark-mode', darkMode); // Save the mode to local storage
 }
 
+/**
+ * Disable dark mode by removing the 'dark' class from the body and updating the mode in local storage.
+ */
+function disableDarkMode() {
+    toggleBtn.classList.replace('fa-moon', 'fa-sun'); // Replace the class of the toggle button to 'fa-sun'
+    body.classList.remove('dark'); // Remove the 'dark' class from the body
+    darkMode = 'disabled'; // Update the mode in local storage to 'disabled'
+    localStorage.setItem('dark-mode', darkMode); // Save the mode to local storage
+}
+
+/**
+ * Check if the user's system prefers dark mode.
+ * @returns {string} The mode, either 'enabled' or 'disabled'.
+ */
+function systemPrefersDark() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'enabled' : 'disabled';
+}
+
+// Check the user's preference for dark mode and apply the appropriate mode
+darkMode = darkMode || systemPrefersDark(); // If darkMode is not set, check if the system prefers dark mode and set it accordingly
+darkMode === 'enabled' ? enableDarkMode() : disableDarkMode(); // Apply the appropriate mode for static loads like on page load or refresh
+
+// Add an event listener to toggle the mode on click
+toggleBtn.addEventListener('click', () => {
+    darkMode = localStorage.getItem('dark-mode'); // Get the user's current mode from local storage
+    darkMode === 'disabled' ? enableDarkMode() : disableDarkMode(); // Toggle the mode
+});
